@@ -132,12 +132,12 @@ public class User {
         selectedUser=userDao.selectUserbyid(id);
     }
 
-    public boolean selectedId(User userA){
+    public boolean selectedId(){
 
-        System.out.println("selected id : "+userA.getId());
+        System.out.println("selected index : "+this.getId());
         System.out.println("edited id : "+User.getEditedId());
         //System.out.println(Objects.equals(this.id, User.getEditedId()));
-        return Objects.equals(userA.getId(), User.getEditedId());
+        return Objects.equals(this.getId(), User.getEditedId());
     }
 
     public boolean isEditMode() {
@@ -145,8 +145,9 @@ public class User {
     }
 
     public void saveChanges() throws SQLException {
-        userDao.updateUser(selectedUser);
+        //userDao.updateUser(selectedUser);
         User.setEditMode(false);
+        User.setEditedId(0);
     }
 
     public void addUserForm() {

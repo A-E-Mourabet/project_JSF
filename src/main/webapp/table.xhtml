@@ -15,21 +15,40 @@
     <hr/>
 
     <h:form>
-        <h:dataTable class="table" value="#{user.usersList}" var="user">
+        <h:dataTable class="table" value="#{user.usersList}" var="user" varStatus="status">
 <!--            <h:column > <c:facet name="header" class="bg-success">Nom</c:facet>
                <h:outputText value="#{user.nom}"/>
-            </h:column>
--->
-            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Nom</c:facet>#{user.nom}</h:column>
-            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Prenom</c:facet>#{user.prenom}</h:column>
-            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Email</c:facet>#{user.email}</h:column>
-            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Age</c:facet>#{user.age}</h:column>
+            </h:column> -->
 
-            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="name" value="#{user.nom}" /></h:column>
-            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="prenom" value="#{user.prenom}" /></h:column>
-            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="age" value="#{user.age}" /></h:column>
-            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="email" value="#{user.email}" /></h:column>
-            <h:column>
+            <h:column  >
+                <c:facet name="header" class="bg-success">Nom</c:facet>
+                <h:outputText rendered="#{ not user.selectedId()}" value="#{user.nom}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="name" value="#{user.nom}" />
+            </h:column>
+            <h:column  >
+                <c:facet name="header" class="bg-success">Prenom</c:facet>
+                <h:outputText rendered="#{not user.selectedId()}" value="#{user.prenom}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="prenom" value="#{user.prenom}" />
+            </h:column>
+            <h:column >
+                <c:facet  name="header" class="bg-success">Email</c:facet>
+                <h:outputText rendered="#{not user.selectedId()}" value="#{user.email}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="email" value="#{user.email}" />
+            </h:column>
+            <h:column >
+                <c:facet  name="header" class="bg-success">Age</c:facet>
+                <h:outputText rendered="#{not user.selectedId()}" value="#{user.age}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="age" value="#{user.age}" />
+            </h:column>
+
+
+    <!--        <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="name" value="#{user.nom}" /></h:column>
+            <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="prenom" value="#{user.prenom}" /></h:column>
+            <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="age" value="#{user.age}" /></h:column>
+            <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="email" value="#{user.email}" /></h:column>
+            -->
+                <h:column>
+
                 <c:facet name="header">Actions</c:facet>
                 <h:commandButton styleClass="btn btn-primary me-4" value="Edit" action="#{user.edituser(user.id)}"/>
                 <h:commandButton styleClass="btn btn-danger" value="Delete" action="#{user.deleteuser(user.id)}"/>
