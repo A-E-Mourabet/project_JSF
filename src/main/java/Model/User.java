@@ -6,12 +6,13 @@ import jakarta.enterprise.context.RequestScoped;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
+
 @ManagedBean
 @RequestScoped
 
 public class User {
 
-    private boolean editMode = false;
     private int id;
     private String nom;
     private String prenom;
@@ -19,6 +20,9 @@ public class User {
     private String email;
     private int age;
     private User selectedUser;
+
+    private  static boolean editMode = false;
+    private  static int editedId = 0;
 
     private UserDao userDao=new UserDao();
 
@@ -40,6 +44,18 @@ public class User {
         this.prenom = prenom;
         this.email = email;
         this.age = age;
+    }
+
+    public static void setEditMode(boolean editMode) {
+        User.editMode = editMode;
+    }
+
+    public static int getEditedId() {
+        return editedId;
+    }
+
+    public static void setEditedId(int editedId) {
+        User.editedId = editedId;
     }
 
     public int getId() {
@@ -85,6 +101,15 @@ public class User {
     public List<User> getUsersList(){
         return userDao.selectallusers();
     }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
     public void deleteuser(int id) throws SQLException {
         userDao.deleteUser(id);
 
@@ -101,21 +126,27 @@ public class User {
     }
 
     public void edituser(int id) throws SQLException {
+        System.out.println("id : " + id );
+        User.setEditedId(id);
+        User.setEditMode(true);
         selectedUser=userDao.selectUserbyid(id);
-//        this.editMode = true;
+    }
+
+    public boolean selectedId(User userA){
+
+        System.out.println("selected id : "+userA.getId());
+        System.out.println("edited id : "+User.getEditedId());
+        //System.out.println(Objects.equals(this.id, User.getEditedId()));
+        return Objects.equals(userA.getId(), User.getEditedId());
     }
 
     public boolean isEditMode() {
-        return editMode;
-    }
-
-    public void setEditMode(boolean editMode) {
-        this.editMode = editMode;
+        return User.editMode;
     }
 
     public void saveChanges() throws SQLException {
         userDao.updateUser(selectedUser);
-//        this.editMode = false;
+        User.setEditMode(false);
     }
 
     public void addUserForm() {
@@ -124,9 +155,6 @@ public class User {
     public String insertUser(User user) throws SQLException {
         userDao.insertObject(user);
         return "table.xhtml";
-
-
-
 
     }
 

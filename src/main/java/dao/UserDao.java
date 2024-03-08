@@ -13,6 +13,8 @@ public class UserDao {
     private String jdbcUsername = "root";
     private String jdbcPasswd = "root";
 
+
+
     private static final String Insert_object = "insert into user (nom,prenom,email,age) values (?,?,?,?)";
     private static final String select_object_by_id = "select * from user where id=?";
     private static final String select_all = "select * from user";
@@ -32,21 +34,13 @@ public class UserDao {
         }
         return conx;
 
-
     }
-
-
 
     //insert object
 
     public boolean insertObject(User user )throws SQLException{
         Connection conx = getConnection();
         boolean find = true;
-
-
-
-
-
 
         //assurer que email et password n'est pas existe
         PreparedStatement ps = conx.prepareStatement(select_all);
@@ -58,14 +52,9 @@ public class UserDao {
                 break;
             }
 
-
         }
 
-
-
         if(find){
-
-
 
             PreparedStatement psins = conx.prepareStatement(Insert_object);
             psins.setString(1, user.getNom());
@@ -80,21 +69,8 @@ public class UserDao {
         return false;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     }
     //select object by id
-
 
     public User selectUserbyid(int id){
         User user=null;
@@ -112,24 +88,14 @@ public class UserDao {
                 user=new User(nom,prenom,email,age);
             }
 
-
-
-
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return user;
 
-
     }
 
-
-
-
-
     //select all objects
-
 
     public List<User> selectallusers(){
 
@@ -145,8 +111,8 @@ public class UserDao {
                 String nom=rs.getString("nom");
                 String prenom=rs.getString("prenom");
                 String email=rs.getString("email");
-
                 int age=rs.getInt("age");
+
                 user.setNom(nom);
                 user.setPrenom(prenom);
                 user.setEmail(email);
@@ -156,24 +122,15 @@ public class UserDao {
                 users.add(user);
             }
 
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return users;
-
     }
-
-
-
-
-
-
 
     //delete object
 
     public boolean deleteUser(int id) throws SQLException {
-
         boolean rowdeleted;
         try {
             Connection conx=getConnection();
@@ -187,7 +144,6 @@ public class UserDao {
         }
         return rowdeleted;
     }
-
 
 
     //update object
@@ -209,13 +165,9 @@ public class UserDao {
         }
         return upd;
 
+
+
     }
-
-
-
-
-
-
 
 
 }

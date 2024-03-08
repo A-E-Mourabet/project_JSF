@@ -3,7 +3,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:c="http://xmlns.jcp.org/jsf/core">
 <h:head>
     <title>Greeting Page</title>
     <h:outputStylesheet library="webjars" name="bootstrap/5.3.2/css/bootstrap.min.css"/>
@@ -16,15 +16,21 @@
 
     <h:form>
         <h:dataTable class="table" value="#{user.usersList}" var="user">
-            <h:column > <f:facet name="header" class="bg-success">Nom</f:facet>
+<!--            <h:column > <c:facet name="header" class="bg-success">Nom</c:facet>
                <h:outputText value="#{user.nom}"/>
             </h:column>
-            <h:column><f:facet name="header" class="bg-success">Prenom</f:facet>#{user.prenom}</h:column>
-            <h:column><f:facet name="header" class="bg-success">Email</f:facet>#{user.email}</h:column>
-            <h:column><f:facet name="header" class="bg-success">Age</f:facet>#{user.age}</h:column>
+-->
+            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Nom</c:facet>#{user.nom}</h:column>
+            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Prenom</c:facet>#{user.prenom}</h:column>
+            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Email</c:facet>#{user.email}</h:column>
+            <h:column rendered="#{not user.isEditMode()}"><c:facet name="header" class="bg-success">Age</c:facet>#{user.age}</h:column>
 
+            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="name" value="#{user.nom}" /></h:column>
+            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="prenom" value="#{user.prenom}" /></h:column>
+            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="age" value="#{user.age}" /></h:column>
+            <h:column rendered="#{user.isEditMode() and user.selectedId(user)}"><h:inputText class="form-control" id="email" value="#{user.email}" /></h:column>
             <h:column>
-                <f:facet name="header">Actions</f:facet>
+                <c:facet name="header">Actions</c:facet>
                 <h:commandButton styleClass="btn btn-primary me-4" value="Edit" action="#{user.edituser(user.id)}"/>
                 <h:commandButton styleClass="btn btn-danger" value="Delete" action="#{user.deleteuser(user.id)}"/>
             </h:column>
