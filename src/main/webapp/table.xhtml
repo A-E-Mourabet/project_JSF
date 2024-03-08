@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Greeting Page</title>
+    <h:outputStylesheet library="webjars" name="bootstrap/5.3.2/css/bootstrap.min.css"/>
+
+</h:head>
+
+<h:body>
+    <h2>Data table example</h2>
+    <hr/>
+
+    <h:form>
+        <h:dataTable class="table" value="#{user.usersList}" var="user">
+            <h:column > <f:facet name="header" class="bg-success">Nom</f:facet>
+               <h:outputText value="#{user.nom}"/>
+            </h:column>
+            <h:column><f:facet name="header" class="bg-success">Prenom</f:facet>#{user.prenom}</h:column>
+            <h:column><f:facet name="header" class="bg-success">Email</f:facet>#{user.email}</h:column>
+            <h:column><f:facet name="header" class="bg-success">Age</f:facet>#{user.age}</h:column>
+
+            <h:column>
+                <f:facet name="header">Actions</f:facet>
+                <h:commandButton styleClass="btn btn-primary me-4" value="Edit" action="#{user.edituser(user.id)}"/>
+                <h:commandButton styleClass="btn btn-danger" value="Delete" action="#{user.deleteuser(user.id)}"/>
+            </h:column>
+
+        </h:dataTable>
+    </h:form>
+    <h:form>
+        <h:commandButton class="btn btn-primary me-md-2" value="Save Changes" action="#{user.saveChanges()}" />
+        <h:commandButton class="btn btn-primary" value="Add User" action="formulaire" />
+    </h:form>
+
+
+</h:body>
+
+
+</html>
