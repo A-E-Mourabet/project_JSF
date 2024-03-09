@@ -8,11 +8,12 @@
         <managed-bean-name>user</managed-bean-name>
         <managed-bean-class>Model.User</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
-
     </managed-bean>
-
-
-
+    <managed-bean>
+        <managed-bean-name>ChangeLang</managed-bean-name>
+        <managed-bean-class>services.ChangeLang</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
 
     <navigation-rule>
     <from-view-id>/table.xhtml</from-view-id>
@@ -30,6 +31,19 @@
     </navigation-rule>
 
 
+    <application>
+        <locale-config>
+            <default-locale>en</default-locale>
+
+            <supported-locale>en</supported-locale>
+            <supported-locale>fr</supported-locale>
+            <supported-locale>it</supported-locale>
+        </locale-config>
+        <resource-bundle>
+            <base-name>ressource.message</base-name>
+            <var>msg</var>
+        </resource-bundle>
+    </application>
 
 
 

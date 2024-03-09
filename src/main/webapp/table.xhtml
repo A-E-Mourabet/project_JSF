@@ -16,52 +16,59 @@
 
     <h:form>
         <h:dataTable class="table" value="#{user.usersList}" var="user" varStatus="status">
-<!--            <h:column > <c:facet name="header" class="bg-success">Nom</c:facet>
-               <h:outputText value="#{user.nom}"/>
-            </h:column> -->
 
             <h:column  >
-                <c:facet name="header" class="bg-success">Nom</c:facet>
-                <h:outputText rendered="#{ not user.selectedId()}" value="#{user.nom}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="name" value="#{user.nom}" />
+                <c:facet name="header" class="bg-success"><h:outputText value="#{msg['nom']}"/></c:facet>
+                <h:outputText rendered="#{ not user.selectedId() or not user.isEditMode()}" value="#{user.nom}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="name" value="#{user.modifiedUser.nom}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addNom" value="#{user.newUser.nom}" /></c:facet>
             </h:column>
             <h:column  >
-                <c:facet name="header" class="bg-success">Prenom</c:facet>
-                <h:outputText rendered="#{not user.selectedId()}" value="#{user.prenom}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="prenom" value="#{user.prenom}" />
+                <c:facet name="header" class="bg-success"><h:outputText value="#{msg['prenom']}"/></c:facet>
+                <h:outputText rendered="#{not user.selectedId() or not user.isEditMode()}" value="#{user.prenom}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="prenom" value="#{user.modifiedUser.prenom}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addPrenom" value="#{user.newUser.prenom}" /></c:facet>
+
             </h:column>
             <h:column >
-                <c:facet  name="header" class="bg-success">Email</c:facet>
-                <h:outputText rendered="#{not user.selectedId()}" value="#{user.email}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="email" value="#{user.email}" />
+                <c:facet  name="header" class="bg-success"><h:outputText value="#{msg['email']}"/></c:facet>
+                <h:outputText rendered="#{not user.selectedId() or not user.isEditMode()}" value="#{user.email}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="email" value="#{user.modifiedUser.email}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addEmail" value="#{user.newUser.email}" /></c:facet>
+
             </h:column>
             <h:column >
-                <c:facet  name="header" class="bg-success">Age</c:facet>
-                <h:outputText rendered="#{not user.selectedId()}" value="#{user.age}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="age" value="#{user.age}" />
+                <c:facet  name="header" class="bg-success"><h:outputText value="#{msg['age']}"/></c:facet>
+                <h:outputText rendered="#{not user.selectedId() or not user.isEditMode()}" value="#{user.age}"/>
+                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="age" value="#{user.modifiedUser.age}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addAge" value="#{user.newUser.age}" /></c:facet>
+
             </h:column>
 
-
-    <!--        <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="name" value="#{user.nom}" /></h:column>
-            <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="prenom" value="#{user.prenom}" /></h:column>
-            <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="age" value="#{user.age}" /></h:column>
-            <h:column ><h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="email" value="#{user.email}" /></h:column>
-            -->
                 <h:column>
 
                 <c:facet name="header">Actions</c:facet>
-                <h:commandButton styleClass="btn btn-primary me-4" value="Edit" action="#{user.edituser(user.id)}"/>
-                <h:commandButton styleClass="btn btn-danger" value="Delete" action="#{user.deleteuser(user.id)}"/>
-            </h:column>
+                <h:commandButton styleClass="btn btn-primary me-4" value="#{msg['button.edit']}" action="#{user.edituser(user.id)}"/>
+                <h:commandButton styleClass="btn btn-danger" value="#{msg['button.delete']}" action="#{user.deleteuser(user.id)}"/>
+                    <c:facet  name="footer" class="bg-success" > <h:commandButton rendered="#{ user.isNewUserForm()}" class="btn btn-primary" value="#{msg['button.add']}" action="#{user.insertUser}"/></c:facet>
+
+                </h:column>
 
         </h:dataTable>
+        <h:commandButton class="btn btn-primary" value="#{msg['button.formAdd']}" action="#{user.UserForm}" />
     </h:form>
     <h:form>
-        <h:commandButton class="btn btn-primary me-md-2" value="Save Changes" action="#{user.saveChanges()}" />
-        <h:commandButton class="btn btn-primary" value="Add User" action="formulaire" />
+        <h:commandButton class="btn btn-primary me-md-2" value="#{msg['button.save']}" action="#{user.saveChanges()}" />
     </h:form>
 
-
+<!--    <h:form>
+    <h:selectOneMenu value="#{ChangeLang.locale.language}" onchange="submit()">
+        <c:selectItem itemValue="en" itemLabel="English" />
+        <c:selectItem itemValue="fr" itemLabel="French" />
+        <c:selectItem itemValue="it" itemLabel="Italian" />
+    </h:selectOneMenu>
+    </h:form>
+-->
 </h:body>
 
 

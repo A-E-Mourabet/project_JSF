@@ -1,5 +1,6 @@
 package dao;
 
+import Model.NewUser;
 import Model.User;
 
 import java.sql.*;
@@ -37,7 +38,7 @@ public class UserDao {
     }
 
     //insert object
-
+////////////////::modified the user to new User
     public boolean insertObject(User user )throws SQLException{
         Connection conx = getConnection();
         boolean find = true;

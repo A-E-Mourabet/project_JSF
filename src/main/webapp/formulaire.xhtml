@@ -10,7 +10,6 @@
     <h:outputStylesheet library="webjars" name="bootstrap/5.3.2/css/bootstrap.min.css"/>
 </h:head>
 <h:body>
-
     <h2>Add User</h2>
     <hr/>
     <h:form>
@@ -19,12 +18,10 @@
         <h:inputText class="form-control" id="name" value="#{user.nom}" />
         </div>
         <div class="mb-3">
-
         <h:outputLabel for="email" value="prenom:" />
         <h:inputText id="email" class="form-control" value="#{user.prenom}" />
         </div>
         <div class="mb-3">
-
         <h:outputLabel for="password" value="email:" />
         <h:inputText class="form-control" id="password" value="#{user.email}" />
         </div>
@@ -33,9 +30,8 @@
         <h:outputLabel for="gender" value="age:" />
         <h:inputText class="form-control" id="gender" value="#{user.age}" />
         </div>
-        <h:commandButton class="btn btn-primary" value="Add" action="#{user.insertUser(user)}"/>
 
-
+        <!--<h:commandButton class="btn btn-primary" value="Add" action="#{}"/> -->
     </h:form>
 
 </h:body>

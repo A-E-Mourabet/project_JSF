@@ -19,9 +19,12 @@ public class User {
 
     private String email;
     private int age;
-    private User selectedUser;
 
+    private static NewUser newUser = new NewUser();
+    private static NewUser modifiedUser = new NewUser();
     private  static boolean editMode = false;
+    private  static boolean NewUserForm = false;
+
     private  static int editedId = 0;
 
     private UserDao userDao=new UserDao();
@@ -45,7 +48,7 @@ public class User {
         this.email = email;
         this.age = age;
     }
-
+    //setters and getters
     public static void setEditMode(boolean editMode) {
         User.editMode = editMode;
     }
@@ -102,6 +105,24 @@ public class User {
         return userDao.selectallusers();
     }
 
+    public NewUser getModifiedUser() {
+        return modifiedUser;
+    }
+
+    public void setModifiedUser(NewUser modifiedUser) {
+        User.modifiedUser = modifiedUser;
+    }
+
+    //methods...
+
+    public static boolean isNewUserForm() {
+        return NewUserForm;
+    }
+
+    public static void setNewUserForm(boolean newUserForm) {
+        NewUserForm = newUserForm;
+    }
+
     public UserDao getUserDao() {
         return userDao;
     }
@@ -110,33 +131,42 @@ public class User {
         this.userDao = userDao;
     }
 
+    public  NewUser getNewUser() {
+        return newUser;
+    }
+
+    public void setNewUser(NewUser newUser) {
+        this.newUser = newUser;
+    }
+
+    //methods
+
     public void deleteuser(int id) throws SQLException {
         userDao.deleteUser(id);
 
-
-
-    }
-
-    public User getSelectedUser() {
-        return selectedUser;
-    }
-
-    public void setSelectedUser(User selectedUser) {
-        this.selectedUser = selectedUser;
     }
 
     public void edituser(int id) throws SQLException {
-        System.out.println("id : " + id );
-        User.setEditedId(id);
-        User.setEditMode(true);
-        selectedUser=userDao.selectUserbyid(id);
+        //System.out.println("id : " + id );
+        if(editMode){
+            setEditMode(false);
+            System.out.println(User.modifiedUser.getId());
+            userDao.updateUser(new User(User.modifiedUser.getId() , User.modifiedUser.getNom() , User.modifiedUser.getPrenom() , User.modifiedUser.getEmail() , User.modifiedUser.getAge()));
+            //User.setEditedId(0);
+        }else{
+            User.setEditedId(id);
+            User.setEditMode(true);
+        }
     }
 
     public boolean selectedId(){
-
-        System.out.println("selected index : "+this.getId());
-        System.out.println("edited id : "+User.getEditedId());
-        //System.out.println(Objects.equals(this.id, User.getEditedId()));
+        if(Objects.equals(this.getId(), User.getEditedId())) {
+            modifiedUser.setId(this.getId());
+            modifiedUser.setPrenom(this.getPrenom());
+            modifiedUser.setNom(this.getNom());
+            modifiedUser.setEmail(this.getEmail());
+            modifiedUser.setAge(this.getAge());
+        }
         return Objects.equals(this.getId(), User.getEditedId());
     }
 
@@ -150,12 +180,20 @@ public class User {
         User.setEditedId(0);
     }
 
-    public void addUserForm() {
-        // Afficher le formulaire d'ajout d'un nouvel utilisateur
-    }
-    public String insertUser(User user) throws SQLException {
-        userDao.insertObject(user);
+    public String UserForm() throws SQLException {
+        if(User.NewUserForm) {
+            User.setNewUserForm(false);
+        }else{
+            User.setNewUserForm(true);
+        //userDao.insertObject(user);
+        }
         return "table.xhtml";
+    }
+
+    public void insertUser()throws SQLException{
+        userDao.insertObject(new User(newUser.getNom(), newUser.getPrenom(), newUser.getEmail(), newUser.getAge()));
+        setNewUser(new NewUser());
+        setNewUserForm(false);
 
     }
 
