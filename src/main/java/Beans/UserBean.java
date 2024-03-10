@@ -22,9 +22,17 @@ public class UserBean {
     private UserDao userDao=new UserDao();
 
 
+    //for pagination
+    private int currentPage = 1;
+    private int pageSize = 3;
+    private int totalPageCount;
+
+
+
 
     public UserBean() {
         refreshUsersList();
+        updateTotalPageCount();
     }
 
 
@@ -77,6 +85,31 @@ public class UserBean {
         this.editedUserId = editedUserId;
     }
 
+    public int getTotalPageCount() {
+        return totalPageCount;
+    }
+
+    public void setTotalPageCount(int totalPageCount) {
+        this.totalPageCount = totalPageCount;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    //methodes
     public void deleteUser(int id) {
         User userToDelete = getUserById(id);
         if (userToDelete != null) {
@@ -86,6 +119,7 @@ public class UserBean {
                 addList.removeIf(user -> Objects.equals(user.getId(), id));
                 updateList.removeIf(user -> Objects.equals(user.getId(), id));
                 usersList.remove(indexToDelete);
+                updateTotalPageCount();
             }
         }
     }
@@ -93,6 +127,7 @@ public class UserBean {
         usersList.add(editedUser);
         addList.add(editedUser);
         setNewUserForm(false);
+        updateTotalPageCount();
     }
 
     public void editUser(int id) {
@@ -134,7 +169,6 @@ public class UserBean {
                     userDao.deleteUser(deletedUser.getId());
                 }
             }
-
             // Clear the lists after changes are applied
             addList.clear();
             deleteList.clear();
@@ -159,6 +193,7 @@ public class UserBean {
 
     private void refreshUsersList() {
         usersList = userDao.selectallusers();
+        updateTotalPageCount();
     }
 
     private User getUserById(int id) {
@@ -178,5 +213,25 @@ public class UserBean {
         }
         return -1;
     }
+
+
+    //pagination methodes utilities
+    public void updateTotalPageCount() {
+        // Calculate total page count based on total number of users and page size
+        int totalUsers = userDao.getTotalUserCount();
+//        totalPageCount = (int) Math.ceil((double) totalUsers / pageSize);
+        setTotalPageCount((int) Math.ceil((double) totalUsers / pageSize));
+    }
+    public void nextPage() {
+        if (currentPage < getTotalPageCount()) {
+            currentPage++;
+        }
+    }
+        public void previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+            }
+        }
+
 
 }

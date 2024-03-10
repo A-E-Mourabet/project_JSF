@@ -165,9 +165,50 @@ public class UserDao {
             throw new RuntimeException(e);
         }
         return upd;
+    }
 
-
-
+    //pagination
+    public int getTotalUserCount() {
+        String query = "SELECT COUNT(*) FROM user";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public List<User> getUsersByPage(int pageNumber, int pageSize) {
+        // Calculate offset based on page number and page size
+        int offset = (pageNumber - 1) * pageSize;
+        // Use SQL query with LIMIT and OFFSET to fetch the subset of users
+        String query = "SELECT * FROM user LIMIT ? OFFSET ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, pageSize);
+            statement.setInt(2, offset);
+            ResultSet resultSet = statement.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (resultSet.next()) {
+                // Populate User objects from ResultSet
+                User user = new User(
+                        resultSet.getInt("id"),
+                        resultSet.getString("nom"),
+                        resultSet.getString("prenom"),
+                        resultSet.getString("email"),
+                        resultSet.getInt("age")
+                );
+                users.add(user);
+            }
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions
+            return null;
+        }
     }
 
 
