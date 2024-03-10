@@ -6,6 +6,8 @@ import Model.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 
 public class UserDao {
 
@@ -56,19 +58,26 @@ public class UserDao {
         }
 
         if(find){
+            try {
+                PreparedStatement psins = conx.prepareStatement(Insert_object);
+                psins.setString(1, user.getNom());
+                psins.setString(2, user.getPrenom());
+                psins.setString(3, user.getEmail());
 
-            PreparedStatement psins = conx.prepareStatement(Insert_object);
-            psins.setString(1, user.getNom());
-            psins.setString(2, user.getPrenom());
-            psins.setString(3, user.getEmail());
-
-            psins.setInt(4, user.getAge());
-            psins.executeUpdate();
-            return true;
-
+                psins.setInt(4, user.getAge());
+                psins.executeUpdate();
+                return true;
+            }catch(SQLException e){
+                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error inserting user", null);
+                FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+            }
+        }else{
+            // Email already exists, create a FacesMessage
+            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already exists", null);
+            FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+            return false;
         }
         return false;
-
 
     }
     //select object by id
@@ -150,9 +159,22 @@ public class UserDao {
     //update object
     public boolean updateUser(User user) throws SQLException{
         boolean upd;
+        Connection conx=getConnection();
+        boolean find = true;
+        //assurer que email et password n'est pas existe
+        PreparedStatement ps = conx.prepareStatement(select_all);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            if (user.getEmail().equals(rs.getString("email")) ) {
+                find = false;
+                break;
+            }
+        }
+        if(find){
+
         try{
-            Connection conx=getConnection();
-            PreparedStatement ps=conx.prepareStatement(update_object);
+            ps=conx.prepareStatement(update_object);
             ps.setString(1, user.getNom());
             ps.setString(2, user.getPrenom());
             ps.setInt(3, user.getAge());
@@ -164,6 +186,13 @@ public class UserDao {
         } catch (Exception e)   {
             throw new RuntimeException(e);
         }
+
+        }else{
+                // Email already exists, create a FacesMessage
+                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already exists", null);
+                FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+                return false;
+            }
         return upd;
     }
 

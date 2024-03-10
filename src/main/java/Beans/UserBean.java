@@ -2,6 +2,8 @@ package Beans;
 
 import Model.User;
 import dao.UserDao;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,9 +25,9 @@ public class UserBean {
 
 
     //for pagination
-    private int currentPage = 1;
-    private int pageSize = 3;
-    private int totalPageCount;
+    private static int currentPage = 1;
+    private static  int pageSize = 3;
+    private static int totalPageCount;
 
 
 
@@ -124,22 +126,44 @@ public class UserBean {
         }
     }
     public void insertUser() {
+        if( emailUsed(editedUser) ){
+            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already in use", null);
+            FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+        }else{
         usersList.add(editedUser);
         addList.add(editedUser);
         setNewUserForm(false);
         updateTotalPageCount();
+        }
+    }
+    public boolean emailUsed(User user){
+        String newUserEmail = user.getEmail().toLowerCase();
+        for (User existingUser : usersList) {
+            String existingUserEmail = existingUser.getEmail().toLowerCase();
+            if (existingUserEmail.equals(newUserEmail)) {
+                // Email is already used
+                return true;
+            }
+        }
+        // Email is not used
+        return false;
     }
 
     public void editUser(int id) {
-        if (editMode) {
-            // Save changes to the in-memory list
-            int index = getUserIndexById(id);
-            if (index != -1) {
-                User UserAdded= new User(editedUser.getId(), editedUser.getNom(),editedUser.getPrenom(), editedUser.getEmail(), editedUser.getAge());
-                updateList.add(UserAdded);
-                usersList.set(index,UserAdded);
-            }
-            setEditMode(false);
+        if (editMode && isSelectedId(id)) {
+                //if (emailUsed(editedUser)) {
+                    //FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already in use", null);
+                    //FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+                //} else {
+
+                    User existingUser = getUserById(id);
+                    User updatedUser = new User(editedUser.getId(), editedUser.getNom(), editedUser.getPrenom(), editedUser.getEmail(), editedUser.getAge());
+                    updateList.add(updatedUser);
+                    int index = usersList.indexOf(existingUser);
+                    if (index != -1) {
+                        usersList.set(index, updatedUser);
+                    }
+                    setEditMode(false);
         } else {
             setEditedUser(getUserById(id));
             setEditMode(true);
@@ -175,7 +199,11 @@ public class UserBean {
             updateList.clear();
         } catch (SQLException e) {
             e.printStackTrace();
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error during saveChanges", e.getMessage()));
         }
+        refreshUsersList();
+
     }
 
 
@@ -216,22 +244,34 @@ public class UserBean {
 
 
     //pagination methodes utilities
-    public void updateTotalPageCount() {
-        // Calculate total page count based on total number of users and page size
-        int totalUsers = userDao.getTotalUserCount();
-//        totalPageCount = (int) Math.ceil((double) totalUsers / pageSize);
+    public String updateTotalPageCount() {
+        int totalUsers = usersList.size();
         setTotalPageCount((int) Math.ceil((double) totalUsers / pageSize));
+        if (currentPage > totalPageCount) {
+            currentPage = totalPageCount;
+        }
+        return "table.xhtml";
     }
-    public void nextPage() {
+    public String  nextPage() {
         if (currentPage < getTotalPageCount()) {
             currentPage++;
         }
+        return updateTotalPageCount();
     }
-        public void previousPage() {
+        public String  previousPage() {
             if (currentPage > 1) {
                 currentPage--;
             }
+            return updateTotalPageCount();
+
         }
 
+    public boolean userIsInCurrentPage(User user) {
+        int userIndex = usersList.indexOf(user);
+        int startIndex = (currentPage - 1) * pageSize;
+        int endIndex = startIndex + pageSize;
+        System.out.println(userIndex >= startIndex && userIndex < endIndex);
+        return userIndex >= startIndex && userIndex < endIndex;
+    }
 
 }

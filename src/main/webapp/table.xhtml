@@ -12,8 +12,6 @@
 
 <h:body>
     <hr/>
-    <!---    ////////////////////////////////////////////////////   -->
-    <!---    ////////////////////////////////////////////////////   -->
     <h:form>
         <div class="d-flex justify-content-between align-items-center m-2" >
             <div>
@@ -36,13 +34,14 @@
     </h:form>
 
     <br/>
-    <h2><h:outputText value="#{msg['h2']}" /></h2>
+    <h2><h:outputText value="#{msg['h2']}" /></h2> <h:messages globalOnly="true" layout="table" styleClass="error-message" />
     <hr/>
     <!---    ////////////////////////////////////////////                                    -->
 
 
     <h:form>
-        <h:dataTable class="table table table-striped table-bordered table-hover" value="#{userBean.usersList}" var="user" varStatus="status">
+        <h:dataTable class="table table table-striped table-bordered table-hover" value="#{userBean.usersList}" var="user" varStatus="status"
+                     first="#{(userBean.currentPage-1) * userBean.pageSize}" rows="#{userBean.pageSize}">
 
             <h:column  >
                 <c:facet name="header" class="bg-success"><h:outputText value="#{msg['nom']}"/></c:facet>
@@ -85,25 +84,30 @@
 
 
         <!-- Pagination -->
-        <div class="d-flex justify-content-between">
-            <div class="m-3">
-                <h:commandLink value="" action="#{userBean.previousPage()}" rendered="#{userBean.currentPage > 1}"  class="page-link bg-primary text-white rounded-start fs-3">
-                    <i class="fas fa-chevron-left"></i>
-                </h:commandLink>
-            </div>
-            <div class="text-end m-3">
+        <div class="d-flex justify-content-center">
 
-                <h:commandLink value="" action="#{userBean.nextPage()}" rendered="#{userBean.totalPageCount > userBean.currentPage}" class="page-link bg-primary text-white rounded-end fs-3">
-                    <i class="fas fa-chevron-right"></i>
-                </h:commandLink>
+            <!-- Previous Page Button -->
+            <div>
+            <h:commandButton class="btn btn-primary me-md-2" value="Previous Page" action="#{userBean.previousPage}"
+                             rendered="#{userBean.currentPage > 1}" />
             </div>
+            <div>
+                <h:outputText class="badge bg-primary" value="#{userBean.currentPage}/#{userBean.totalPageCount}"/>
+            </div>
+            <!-- Next Page Button -->
+            <div>
+            <h:commandButton class="btn btn-primary me-md-2" value="Next Page" action="#{userBean.nextPage}"
+                             rendered="#{userBean.totalPageCount > userBean.currentPage}" />
+            </div>
+
+
         </div>
     </h:form>
     <h:form>
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h:commandButton class="btn btn-primary me-md-2" value="#{msg['button.formAdd']}" action="#{userBean.userForm}" />
+                        <h:commandButton class="btn btn-primary me-md-2" value="#{msg['button.formAdd']}" action="#{userBean.userForm}" />
                 </div>
 
                 <div class="col-md-6 text-right">
@@ -113,15 +117,6 @@
         </div>
     </h:form>
 
-
-<!--    <h:form>
-    <h:selectOneMenu value="#{ChangeLang.locale.language}" onchange="submit()">
-        <c:selectItem itemValue="en" itemLabel="English" />
-        <c:selectItem itemValue="fr" itemLabel="French" />
-        <c:selectItem itemValue="it" itemLabel="Italian" />
-    </h:selectOneMenu>
-    </h:form>
--->
 </h:body>
 
 
