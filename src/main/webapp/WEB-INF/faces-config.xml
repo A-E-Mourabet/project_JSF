@@ -10,9 +10,14 @@
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>userBean</managed-bean-name>
+        <managed-bean-class>Beans.UserBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>ChangeLang</managed-bean-name>
-        <managed-bean-class>services.ChangeLang</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
+        <managed-bean-class>Beans.ChangeLang</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <navigation-rule>

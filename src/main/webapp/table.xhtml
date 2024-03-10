@@ -5,7 +5,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:c="http://xmlns.jcp.org/jsf/core">
 <h:head>
-    <title>Greeting Page</title>
+    <title>JSF Data table</title>
     <h:outputStylesheet library="webjars" name="bootstrap/5.3.2/css/bootstrap.min.css"/>
 
 </h:head>
@@ -15,50 +15,50 @@
     <hr/>
 
     <h:form>
-        <h:dataTable class="table" value="#{user.usersList}" var="user" varStatus="status">
+        <h:dataTable class="table" value="#{userBean.usersList}" var="user" varStatus="status">
 
             <h:column  >
                 <c:facet name="header" class="bg-success"><h:outputText value="#{msg['nom']}"/></c:facet>
-                <h:outputText rendered="#{ not user.selectedId() or not user.isEditMode()}" value="#{user.nom}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="name" value="#{user.modifiedUser.nom}" />
-                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addNom" value="#{user.newUser.nom}" /></c:facet>
+                <h:outputText rendered="#{ not userBean.isSelectedId(user.id) or not userBean.isEditMode()}" value="#{user.nom}"/>
+                <h:inputText rendered="#{userBean.isEditMode() and userBean.isSelectedId(user.id)}" class="form-control" id="name" value="#{userBean.editedUser.nom}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{userBean.newUserForm}" class="form-control" id="addNom" value="#{userBean.editedUser.nom}" /></c:facet>
             </h:column>
             <h:column  >
                 <c:facet name="header" class="bg-success"><h:outputText value="#{msg['prenom']}"/></c:facet>
-                <h:outputText rendered="#{not user.selectedId() or not user.isEditMode()}" value="#{user.prenom}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="prenom" value="#{user.modifiedUser.prenom}" />
-                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addPrenom" value="#{user.newUser.prenom}" /></c:facet>
+                <h:outputText rendered="#{not userBean.isSelectedId(user.id) or not userBean.isEditMode()}" value="#{user.prenom}"/>
+                <h:inputText rendered="#{userBean.isEditMode() and userBean.isSelectedId(user.id)}" class="form-control" id="prenom" value="#{userBean.editedUser.prenom}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{userBean.newUserForm}" class="form-control" id="addPrenom" value="#{userBean.editedUser.prenom}" /></c:facet>
 
             </h:column>
             <h:column >
                 <c:facet  name="header" class="bg-success"><h:outputText value="#{msg['email']}"/></c:facet>
-                <h:outputText rendered="#{not user.selectedId() or not user.isEditMode()}" value="#{user.email}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="email" value="#{user.modifiedUser.email}" />
-                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addEmail" value="#{user.newUser.email}" /></c:facet>
+                <h:outputText rendered="#{not userBean.isSelectedId(user.id) or not userBean.isEditMode()}" value="#{user.email}"/>
+                <h:inputText rendered="#{userBean.isEditMode() and userBean.isSelectedId(user.id)}" class="form-control" id="email" value="#{userBean.editedUser.email}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ userBean.newUserForm}" class="form-control" id="addEmail" value="#{userBean.editedUser.email}" /></c:facet>
 
             </h:column>
             <h:column >
                 <c:facet  name="header" class="bg-success"><h:outputText value="#{msg['age']}"/></c:facet>
-                <h:outputText rendered="#{not user.selectedId() or not user.isEditMode()}" value="#{user.age}"/>
-                <h:inputText rendered="#{user.isEditMode() and user.selectedId()}" class="form-control" id="age" value="#{user.modifiedUser.age}" />
-                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{ user.isNewUserForm()}" class="form-control" id="addAge" value="#{user.newUser.age}" /></c:facet>
+                <h:outputText rendered="#{not userBean.isSelectedId(user.id) or not userBean.isEditMode()}" value="#{user.age}"/>
+                <h:inputText rendered="#{userBean.isEditMode() and userBean.isSelectedId(user.id)}" class="form-control" id="age" value="#{userBean.editedUser.age}" />
+                <c:facet  name="footer" class="bg-success" ><h:inputText rendered="#{userBean.newUserForm}" class="form-control" id="addAge" value="#{userBean.editedUser.age}" /></c:facet>
 
             </h:column>
 
                 <h:column>
 
                 <c:facet name="header">Actions</c:facet>
-                <h:commandButton styleClass="btn btn-primary me-4" value="#{msg['button.edit']}" action="#{user.edituser(user.id)}"/>
-                <h:commandButton styleClass="btn btn-danger" value="#{msg['button.delete']}" action="#{user.deleteuser(user.id)}"/>
-                    <c:facet  name="footer" class="bg-success" > <h:commandButton rendered="#{ user.isNewUserForm()}" class="btn btn-primary" value="#{msg['button.add']}" action="#{user.insertUser}"/></c:facet>
+                <h:commandButton styleClass="btn btn-primary me-4" value="#{msg['button.edit']}" action="#{userBean.editUser(user.id)}"/>
+                <h:commandButton styleClass="btn btn-danger" value="#{msg['button.delete']}" action="#{userBean.deleteUser(user.id)}"/>
+                    <c:facet  name="footer" class="bg-success" > <h:commandButton rendered="#{ userBean.newUserForm}" class="btn btn-primary" value="#{msg['button.add']}" action="#{userBean.insertUser()}"/></c:facet>
 
                 </h:column>
 
         </h:dataTable>
-        <h:commandButton class="btn btn-primary" value="#{msg['button.formAdd']}" action="#{user.UserForm}" />
+        <h:commandButton class="btn btn-primary" value="#{msg['button.formAdd']}" action="#{userBean.userForm}" />
     </h:form>
     <h:form>
-        <h:commandButton class="btn btn-primary me-md-2" value="#{msg['button.save']}" action="#{user.saveChanges()}" />
+        <h:commandButton class="btn btn-primary me-md-2" value="#{msg['button.save']}" action="#{userBean.saveChanges()}" />
     </h:form>
 
 <!--    <h:form>

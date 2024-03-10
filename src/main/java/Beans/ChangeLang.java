@@ -1,4 +1,4 @@
-package services;
+package Beans;
 
 import java.util.Locale;
 
