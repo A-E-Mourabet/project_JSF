@@ -149,7 +149,6 @@ public class UserBean {
         }
     }
 
-
     public boolean emailUsed(User user){
         String newUserEmail = user.getEmail().toLowerCase();
         for (User existingUser : usersList) {
@@ -289,3 +288,4 @@ public class UserBean {
     }
 
 }
+
