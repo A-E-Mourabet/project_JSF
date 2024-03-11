@@ -21,9 +21,15 @@ public class LanguageBean implements Serializable {
 
     static {
         countries = new LinkedHashMap<>();
+        // On recupere la langue du navigateur
+        String browserLanguage = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale().getLanguage();
+        // On cree d'abord une entree pour la langue du navigateur
+        countries.put(getLanguageName(browserLanguage), new Locale(browserLanguage));
+        // Ensuite, on ajoute les autres langues
         countries.put("English", Locale.ENGLISH);
         countries.put("Français", Locale.FRENCH);
         countries.put("Italiano", Locale.ITALIAN);
+
     }
 
     public Map<String, Object> getCountriesInMap() {
@@ -32,8 +38,8 @@ public class LanguageBean implements Serializable {
 
     public String getLocaleCode() {
         if (localeCode == null) {
-            // Par défaut, définir la langue sur l'anglais la première fois que la page est visitée
-            localeCode = Locale.ENGLISH.getLanguage();
+            // Par defaut, definir la langue sur la langue du navigateur la premiere fois que la page est visitee
+            localeCode = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale().getLanguage();
         }
         return localeCode;
     }
@@ -42,16 +48,27 @@ public class LanguageBean implements Serializable {
         this.localeCode = localeCode;
     }
 
-
     public void countryLocaleCodeChanged(ValueChangeEvent e) {
         String newLocaleValue = e.getNewValue().toString();
 
-
         for (Map.Entry<String, Object> entry : countries.entrySet()) {
             if (entry.getValue().toString().equals(newLocaleValue)) {
-
                 FacesContext.getCurrentInstance().getViewRoot().setLocale((Locale) entry.getValue());
             }
+        }
+    }
+
+    // Methode utilitaire pour obtenir le nom de la langue a partir du code de langue
+    private static String getLanguageName(String languageCode) {
+        switch (languageCode) {
+            case "en":
+                return "English";
+            case "fr":
+                return "Français";
+            case "it":
+                return "Italiano";
+            default:
+                return "Other";
         }
     }
 }

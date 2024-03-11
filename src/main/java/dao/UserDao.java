@@ -6,15 +6,18 @@ import Model.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 
 public class UserDao {
 
 
-    private String jdbcURL = "jdbc:mysql://localhost:3306/commerce";
+    private String jdbcURL = "jdbc:mysql://localhost:3306/project_jsf";
     private String jdbcUsername = "root";
-    private String jdbcPasswd = "root";
+    private String jdbcPasswd = "";
 
 
 
@@ -41,45 +44,51 @@ public class UserDao {
 
     //insert object
 ////////////////::modified the user to new User
-    public boolean insertObject(User user )throws SQLException{
+
+    public boolean insertObject(User user) throws SQLException {
         Connection conx = getConnection();
         boolean find = true;
 
-        //assurer que email et password n'est pas existe
+        // Assurer que l'email n'existe pas déjà
         PreparedStatement ps = conx.prepareStatement(select_all);
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-            if (user.getEmail().equals(rs.getString("email")) ) {
+            if (user.getEmail().equals(rs.getString("email"))) {
                 find = false;
                 break;
             }
-
         }
 
-        if(find){
+        // Vérifier le format de l'email
+        if (find) {
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            Pattern pattern = Pattern.compile(emailRegex);
+            Matcher matcher = pattern.matcher(user.getEmail());
+
+            if (!matcher.matches()) {
+                // Email invalide, afficher un message d'erreur
+                throw new IllegalArgumentException("Invalid email format");
+            }
+
             try {
                 PreparedStatement psins = conx.prepareStatement(Insert_object);
                 psins.setString(1, user.getNom());
                 psins.setString(2, user.getPrenom());
                 psins.setString(3, user.getEmail());
-
                 psins.setInt(4, user.getAge());
                 psins.executeUpdate();
                 return true;
-            }catch(SQLException e){
-                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error inserting user", null);
-                FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+            } catch (SQLException e) {
+                throw new RuntimeException("Erreur lors de l'insertion de l'utilisateur", e);
             }
-        }else{
-            // Email already exists, create a FacesMessage
-            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already exists", null);
-            FacesContext.getCurrentInstance().addMessage(null, errorMessage);
-            return false;
+        } else {
+            // L'email existe déjà, afficher un message d'erreur
+            throw new IllegalArgumentException("Email already exists");
         }
-        return false;
-
     }
+
+
     //select object by id
 
     public User selectUserbyid(int id){

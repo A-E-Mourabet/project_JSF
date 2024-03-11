@@ -26,7 +26,7 @@ public class UserBean {
 
     //for pagination
     private static int currentPage = 1;
-    private static  int pageSize = 3;
+    private static  int pageSize = 4;
     private static int totalPageCount;
 
 
@@ -126,16 +126,30 @@ public class UserBean {
         }
     }
     public void insertUser() {
-        if( emailUsed(editedUser) ){
-            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already in use", null);
+        try {
+            if (editedUser.getEmail().isEmpty()) {
+                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email cannot be empty", null);
+                FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+            } else if (emailUsed(editedUser)) {
+                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already in use", null);
+                FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+            } else {
+                userDao.insertObject(editedUser);
+                usersList.add(editedUser);
+                addList.add(editedUser);
+                setNewUserForm(false);
+                updateTotalPageCount();
+            }
+        } catch (IllegalArgumentException e) {
+            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), null);
             FacesContext.getCurrentInstance().addMessage(null, errorMessage);
-        }else{
-        usersList.add(editedUser);
-        addList.add(editedUser);
-        setNewUserForm(false);
-        updateTotalPageCount();
+        } catch (SQLException ex) {
+            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error inserting user", null);
+            FacesContext.getCurrentInstance().addMessage(null, errorMessage);
         }
     }
+
+
     public boolean emailUsed(User user){
         String newUserEmail = user.getEmail().toLowerCase();
         for (User existingUser : usersList) {
