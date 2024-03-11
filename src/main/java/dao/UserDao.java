@@ -166,23 +166,45 @@ public class UserDao {
 
 
     //update object
+    //update object
     public boolean updateUser(User user) throws SQLException{
         boolean upd;
         Connection conx=getConnection();
         boolean find = true;
-        //assurer que email et password n'est pas existe
+        // Assurer que l'email n'est pas vide
+        if (user.getEmail().isEmpty()) {
+            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email cannot be empty", null);
+            FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+            return false;
+        }
+
+        // Assurer que l'email a un format valide
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(user.getEmail());
+
+        if (!matcher.matches()) {
+            // Email invalide, afficher un message d'erreur
+            FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid email format", null);
+            FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+            return false;
+        }
+
+        // Vérifier si l'email existe déjà
         PreparedStatement ps = conx.prepareStatement(select_all);
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-            if (user.getEmail().equals(rs.getString("email")) ) {
-                find = false;
-                break;
+            if (user.getEmail().equals(rs.getString("email")) && user.getId() != rs.getInt("id")) {
+                // Email déjà utilisé par un autre utilisateur, afficher un message d'erreur
+                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already exists", null);
+                FacesContext.getCurrentInstance().addMessage(null, errorMessage);
+                return false;
             }
         }
-        if(find){
 
-        try{
+        try {
+            // Effectuer la mise à jour de l'utilisateur si tout est valide
             ps=conx.prepareStatement(update_object);
             ps.setString(1, user.getNom());
             ps.setString(2, user.getPrenom());
@@ -196,14 +218,9 @@ public class UserDao {
             throw new RuntimeException(e);
         }
 
-        }else{
-                // Email already exists, create a FacesMessage
-                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already exists", null);
-                FacesContext.getCurrentInstance().addMessage(null, errorMessage);
-                return false;
-            }
         return upd;
     }
+
 
     //pagination
     public int getTotalUserCount() {
